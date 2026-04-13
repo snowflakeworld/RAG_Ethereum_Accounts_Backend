@@ -1,0 +1,87 @@
+[
+  {
+    "text": "What is the balance of Ethereum account X?",
+    "cypher": "MATCH (from:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nWITH SUM(tx.value) AS totalReceived\nMATCH (to:Account {address: 'X'})-[:SENT]->(tx2:Transaction)\nWITH totalReceived, SUM(tx2.value) AS totalSent\nRETURN totalReceived - totalSent AS balance",
+    "type": "GetBalance"
+  },
+  {
+    "text": "How much ETH does account X hold?",
+    "cypher": "MATCH (from:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nWITH SUM(tx.value) AS totalReceived\nMATCH (to:Account {address: 'X'})-[:SENT]->(tx2:Transaction)\nWITH totalReceived, SUM(tx2.value) AS totalSent\nRETURN totalReceived - totalSent AS balance",
+    "type": "GetBalance"
+  },
+  {
+    "text": "What is the total amount of ETH sent from account X?",
+    "cypher": "MATCH (to:Account {address: 'X'})-[:SENT]->(tx2:Transaction)\nRETURN SUM(tx2.value) AS totalSent",
+    "type": "TotalSentAmount"
+  },
+  {
+    "text": "How much ETH were sent from account X?",
+    "cypher": "MATCH (to:Account {address: 'X'})-[:SENT]->(tx2:Transaction)\nRETURN SUM(tx2.value) AS totalSent",
+    "type": "TotalSentAmount"
+  },
+  {
+    "text": "What’s the count of transactions sent from account X?",
+    "cypher": "MATCH (from:Account {address: 'X'})-[:SENT]->(tx:Transaction)\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetSentTransactionCount"
+  },
+  {
+    "text": "How many transactions were sent from account X?",
+    "cypher": "MATCH (from:Account {address: 'X'})-[:SENT]->(tx:Transaction)\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetSentTransactionCount"
+  },
+  {
+    "text": "What is the total amount of ETH received by account X?",
+    "cypher": "MATCH (from:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN SUM(tx.value) AS totalReceived",
+    "type": "TotalReceivedAmount"
+  },
+  {
+    "text": "How much ETH were received by account X?",
+    "cypher": "MATCH (from:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN SUM(tx.value) AS totalReceived",
+    "type": "TotalReceivedAmount"
+  },
+  {
+    "text": "What’s the count of transactions received by account X?",
+    "cypher": "MATCH (to:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetReceivedTransactionCount"
+  },
+  {
+    "text": "How many transactions were received by account X?",
+    "cypher": "MATCH (to:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetReceivedTransactionCount"
+  },
+  {
+    "text": "What is the total amount of ETH sent from account X1 to account X2?",
+    "cypher": "MATCH (from:Account {address: 'X1'})-[:SENT]->(tx:Transaction)-[:TO]->(to:Account {address: 'X2'})\nRETURN sum(tx.value) AS transactionAmount",
+    "type": "GetTransactionAmount"
+  },
+  {
+    "text": "How much ETH were sent from account X1 to account X2?",
+    "cypher": "MATCH (from:Account {address: 'X1'})-[:SENT]->(tx:Transaction)-[:TO]->(to:Account {address: 'X2'})\nRETURN sum(tx.value) AS transactionAmount",
+    "type": "GetTransactionAmount"
+  },
+  {
+    "text": "What’s the count of transactions sent from account X1 to account X2?",
+    "cypher": "MATCH (from:Account {address: 'X1'})-[:SENT]->(tx:Transaction)-[:TO]->(to:Account {address: 'X2'})\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetTransactionCount"
+  },
+  {
+    "text": "How many transactions were sent from X1 to X2?",
+    "cypher": "MATCH (from:Account {address: 'X1'})-[:SENT]->(tx:Transaction)-[:TO]->(to:Account {address: 'X2'})\nRETURN COUNT(tx) AS transactionCount",
+    "type": "GetTransactionCount"
+  },
+  {
+    "text": "Show the transaction history of Ethereum account X.",
+    "cypher": "MATCH (a:Account {address: 'X'})-[:SENT]->(tx:Transaction)\nRETURN 'Sent' AS transactionType, tx.transactionHash AS transactionHash, tx.value AS value, tx.timestamp AS timestamp, tx.gas AS gas, tx.blockNumber as blockNumber, tx.transactionIndex as transactionIndex\nUNION\nMATCH (a:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN 'Received' AS transactionType, tx.transactionHash AS transactionHash, tx.value AS value, tx.timestamp AS timestamp, tx.gas AS gas, tx.blockNumber as blockNumber, tx.transactionIndex as transactionIndex\nORDER BY timestamp DESC",
+    "type": "GetTotalTransactionHistory"
+  },
+  {
+    "text": "Show the transaction history received by Ethereum account X.",
+    "cypher": "MATCH (a:Account {address: 'X'})<-[:TO]-(tx:Transaction)\nRETURN 'Received' AS transactionType, tx.transactionHash AS transactionHash, tx.value AS value, tx.timestamp AS timestamp, tx.gas AS gas, tx.blockNumber as blockNumber, tx.transactionIndex as transactionIndex\nORDER BY timestamp DESC",
+    "type": "GetReceivedTransactionHistory"
+  },
+  {
+    "text": "Show the transaction history sent from Ethereum account X.",
+    "cypher": "MATCH (a:Account {address: 'X'})-[:SENT]->(tx:Transaction)\nRETURN 'Sent' AS transactionType, tx.transactionHash AS transactionHash, tx.value AS value, tx.timestamp AS timestamp, tx.gas AS gas, tx.blockNumber as blockNumber, tx.transactionIndex as transactionIndex\nORDER BY timestamp DESC",
+    "type": "GetSentTransactionHistory"
+  }
+]
