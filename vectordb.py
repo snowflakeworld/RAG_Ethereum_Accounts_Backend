@@ -3,7 +3,7 @@ import json
 
 # Define the name and dimension of your vector index
 index_name = "my-ethereum-index"
-dimension = 1024  # Replace with the dimension size of your embeddings
+dimension = 512  # Replace with the dimension size of your embeddings
 
 # Initialize Pinecone with your API key
 pc = Pinecone(
@@ -34,7 +34,7 @@ def upsert_records(id, text, cypher, type):
 def search_records(prompt):
     results = index.search(
         namespace="__default__",
-        query={"inputs": {"text": prompt}, "top_k": 1},
+        query={"inputs": {"text": prompt}, "top_k": 3},
         fields=["text", "cypher", "type"],
     )
 
@@ -43,16 +43,24 @@ def search_records(prompt):
     if len(hits) == 0:
         return None
 
-    relevant_record = hits[0]
-    id = relevant_record["_id"]
-    score = relevant_record["_score"]
-    text = relevant_record["fields"]["text"]
-    cypher = relevant_record["fields"]["cypher"]
-    type = relevant_record["fields"]["type"]
+    relevant_records = []
+    has_proper_answer = False
 
-    print(id, score, text, cypher, type)
+    for hit in hits:
+        id = hit["_id"]
+        score = hit["_score"]
+        text = hit["fields"]["text"]
+        cypher = hit["fields"]["cypher"]
+        type = hit["fields"]["type"]
 
-    return (id, score, text, cypher, type)
+        relevant_records.append((id, score, text, cypher, type))
+        if score >= 0.25:
+            has_proper_answer = True
+
+    if has_proper_answer == False:
+        return None
+
+    return relevant_records
 
 
 def clear_db():
@@ -76,6 +84,6 @@ def construct_db():
 
 # construct_db()
 # clear_db()
-search_records(
-    "What's the total count of transactions sent from account 0x121212121212121"
-)
+# search_records(
+#     "What is the total amount of Ether sent from 0x123123123123 to 0x123123123123"
+# )
