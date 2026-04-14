@@ -1,5 +1,15 @@
 [
   {
+    "text": "What is the number of accounts?",
+    "cypher": "MATCH (a:Account)\nRETURN count(a.address) as accountCount",
+    "type": "GetTotalAccountCount"
+  },
+  {
+    "text": "How many accounts are there?",
+    "cypher": "MATCH (a:Account)\nRETURN count(a.address) as accountCount",
+    "type": "GetTotalAccountCount"
+  },
+  {
     "text": "What’s the count of transactions?",
     "cypher": "MATCH (tx:Transaction)\nRETURN count(tx) AS totalTransactionCount",
     "type": "GetTotalTransactionCount"
