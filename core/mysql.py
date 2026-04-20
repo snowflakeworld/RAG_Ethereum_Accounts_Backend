@@ -28,12 +28,12 @@ def get_variable(key):
 
 
 def update_variable(key, value):
-    # row = session.query(Variables).filter(Variables.key == key).first()
+    row = session.query(Variables).filter(Variables.key == key).first()
 
-    # if row:
-    #     row.value = value
+    if row:
+        row.value = value
 
-    # session.commit()
+    session.commit()
 
     global latestBlockNumber
     latestBlockNumber = int(value)
